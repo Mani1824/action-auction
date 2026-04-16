@@ -994,7 +994,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <div class="admin-section" id="admin-teams">
         <div class="admin-section-title">TEAM MANAGEMENT</div>
         <div class="table-wrap"><table>
-          <thead><tr><th>Team</th><th>Owner</th><th>Budget Left</th><th>Players</th><th>Action</th></tr></thead>
+          <thead><tr><th>Team</th><th>Owner</th><th>Budget Left</th><th>Players</th><th>Status</th><th>Action</th></tr></thead>
           <tbody id="adminTeamsTable"></tbody>
         </table></div>
       </div>
@@ -1564,7 +1564,7 @@ function renderTeamBudgets() {
     list.innerHTML = `<div style="color:var(--text-secondary);font-size:.85rem;text-align:center;padding:1rem;">No teams registered</div>`;
     return;
   }
-  list.innerHTML = state.teams.map(t => {
+  list.innerHTML = state.teams.filter(t => t.status === "approved").map(t => {
     const pct     = Math.round((t.budget / 10000) * 100);
     const isTop   = state.currentBidder === t.id;
     return `<div class="team-budget-item" style="${isTop ? "background:rgba(245,158,11,0.08);border-radius:8px;padding:0.6rem 0.4rem;" : ""}">
@@ -1798,36 +1798,60 @@ function renderAdmin() {
   renderAdminDashboard();
 }
 
-// FROM line 1799
 function renderAdminDashboard() {
   const el = document.getElementById("adPlayers"); if (!el) return;
   document.getElementById("adPlayers").textContent = state.players.length;
   document.getElementById("adTeams").textContent   = state.teams.length;
   document.getElementById("adSold").textContent    = state.players.filter(p => p.status === "sold").length;
-  document.getElementById("adPending").textContent = state.players.filter(p => p.status === "pending").length;
-  const pending = state.players.filter(p => p.status === "pending");
-  const pendEl  = document.getElementById("adminPendingList");
-  if (!pending.length) {
-    pendEl.innerHTML = `<div style="color:var(--text-secondary);padding:1rem;">No pending approvals</div>`;
-    return;
+
+  const pendingPlayers = state.players.filter(p => p.status === "pending");
+  const pendingTeams   = state.teams.filter(t => t.status === "pending");
+  document.getElementById("adPending").textContent = pendingPlayers.length + pendingTeams.length;
+
+  const pendEl = document.getElementById("adminPendingList");
+  let pendHTML = "";
+
+  if (pendingPlayers.length) {
+    pendHTML += `<h4 style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;margin-bottom:.5rem;color:var(--blue-light);">🏏 Pending Players</h4>`;
+    pendHTML += pendingPlayers.map(p => `
+      <div class="glass-box glass-box-sm" style="display:flex;align-items:center;gap:1rem;margin-bottom:.5rem;flex-wrap:wrap;">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--bg-secondary);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+          ${p.img ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;">` : (p.name[0]||"?")}
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:700;">${p.name}</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">${p.role} · Base: ${p.basePrice} pts · #${p.jersey}</div>
+        </div>
+        <div style="display:flex;gap:.5rem;">
+          <button class="btn btn-green btn-sm" onclick="approvePlayer('${p.id}')">✅ Approve</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectPlayer('${p.id}')">❌ Reject</button>
+        </div>
+      </div>`).join("");
   }
-  pendEl.innerHTML = pending.map(p => `
-    <div class="glass-box glass-box-sm" style="display:flex;align-items:center;gap:1rem;margin-bottom:.5rem;flex-wrap:wrap;">
-      <div style="width:44px;height:44px;border-radius:50%;background:var(--bg-secondary);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
-        ${p.img ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;">` : (p.name[0]||"?")}
-      </div>
-      <div style="flex:1;">
-        <div style="font-weight:700;">${p.name}</div>
-        <div style="font-size:.8rem;color:var(--text-secondary);">${p.role} · Base: ${p.basePrice} pts · #${p.jersey}</div>
-      </div>
-      <div style="display:flex;gap:.5rem;">
-        <button class="btn btn-green btn-sm" onclick="approvePlayer('${p.id}')">✅ Approve</button>
-        <button class="btn btn-danger btn-sm" onclick="rejectPlayer('${p.id}')">❌ Reject</button>
-      </div>
-    </div>`).join("");
-}
-// TO line 1825 (closing brace)
-    </div>`).join("");
+
+  if (pendingTeams.length) {
+    pendHTML += `<h4 style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:1px;margin:.75rem 0 .5rem;color:var(--gold);">🛡️ Pending Teams</h4>`;
+    pendHTML += pendingTeams.map(t => `
+      <div class="glass-box glass-box-sm" style="display:flex;align-items:center;gap:1rem;margin-bottom:.5rem;flex-wrap:wrap;">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--bg-secondary);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">
+          ${t.logo ? `<img src="${t.logo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (t.name[0]||"🛡️")}
+        </div>
+        <div style="flex:1;">
+          <div style="font-weight:700;">${t.name}</div>
+          <div style="font-size:.8rem;color:var(--text-secondary);">Owner: ${t.owner} · Budget: 10000 pts</div>
+        </div>
+        <div style="display:flex;gap:.5rem;">
+          <button class="btn btn-green btn-sm" onclick="approveTeam('${t.id}')">✅ Approve</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectTeam('${t.id}')">❌ Reject</button>
+        </div>
+      </div>`).join("");
+  }
+
+  if (!pendingPlayers.length && !pendingTeams.length) {
+    pendHTML = `<div style="color:var(--text-secondary);padding:1rem;">No pending approvals</div>`;
+  }
+
+  pendEl.innerHTML = pendHTML;
 }
 
 window.approvePlayer = async function(id) {
@@ -1896,7 +1920,7 @@ function renderAdminTeams() {
   <tr>
     <td><b>${t.name}</b></td>
     <td>${t.owner}</td>
-    <td><span style="color:var(--gold);font-weight:700;">${t.budget}</span> / 1000</td>
+    <td><span style="color:var(--gold);font-weight:700;">${t.budget}</span> / 10000</td>
     <td>${(t.players||[]).length} / 15</td>
     <td>
       <span class="badge ${t.status === 'pending' ? 'badge-pending' : 'badge-pool'}" style="margin-right:.4rem;">
@@ -1946,7 +1970,7 @@ window.selectPoolPlayer = function(id, el) {
 };
 
 window.adminStartAuction = async function() {
-  if (!state.teams.length) return toast("Need at least one team!", "error");
+  if (!state.teams.filter(t => t.status === "approved").length) return toast("Need at least one approved team!", "error");
   state.auctionStatus = "live";
   try {
     await saveAuctionState();
