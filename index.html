@@ -1269,7 +1269,7 @@ function initListeners() {
 
     // Compute timer from server timestamp
     if (state.timerStartedAt) {
-      const elapsed = Math.floor((Date.now() - state.timerStartedAt) / 10000);
+      const elapsed = Math.floor((Date.now() - state.timerStartedAt) / 1000);
       state.timerValue = Math.max(0, 30 - elapsed);
     }
 
