@@ -761,7 +761,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     <div class="form-page">
       <div class="form-header">
         <h2>🛡️ TEAM REGISTRATION</h2>
-        <p>Register your team and get 1000 points to bid in the auction.</p>
+        <p>Register your team and get 10000 points to bid in the auction.</p>
       </div>
       <div class="glass-box">
         <div class="tabs">
@@ -1269,7 +1269,7 @@ function initListeners() {
 
     // Compute timer from server timestamp
     if (state.timerStartedAt) {
-      const elapsed = Math.floor((Date.now() - state.timerStartedAt) / 1000);
+      const elapsed = Math.floor((Date.now() - state.timerStartedAt) / 10000);
       state.timerValue = Math.max(0, 30 - elapsed);
     }
 
@@ -1395,7 +1395,7 @@ window.registerTeam = async function() {
       name, owner, email, password,
       phone:  document.getElementById("tPhone").value,
       logo:   imgData,
-      budget: 1000,
+      budget: 10000,
       players:[],
       registeredAt: serverTimestamp()
     });
@@ -1563,7 +1563,7 @@ function renderTeamBudgets() {
     return;
   }
   list.innerHTML = state.teams.map(t => {
-    const pct     = Math.round((t.budget / 1000) * 100);
+    const pct     = Math.round((t.budget / 10000) * 100);
     const isTop   = state.currentBidder === t.id;
     return `<div class="team-budget-item" style="${isTop ? "background:rgba(245,158,11,0.08);border-radius:8px;padding:0.6rem 0.4rem;" : ""}">
       <div class="tb-name">${isTop ? "👑 " : ""}${t.name}</div>
@@ -1602,7 +1602,7 @@ function startLocalTimer() {
   clearInterval(state.timerInterval);
   // Recalculate from server timestamp if available
   if (state.timerStartedAt) {
-    const elapsed = Math.floor((Date.now() - state.timerStartedAt) / 1000);
+    const elapsed = Math.floor((Date.now() - state.timerStartedAt) / 10000);
     state.timerValue = Math.max(0, 30 - elapsed);
   }
   updateTimerUI();
@@ -1616,7 +1616,7 @@ function startLocalTimer() {
         endPlayerAuction();
       }
     }
-  }, 1000);
+  }, 10000);
 }
 
 function updateTimerUI() {
@@ -1877,7 +1877,7 @@ function renderAdminTeams() {
     <tr>
       <td><b>${t.name}</b></td>
       <td>${t.owner}</td>
-      <td><span style="color:var(--gold);font-weight:700;">${t.budget}</span> / 1000</td>
+      <td><span style="color:var(--gold);font-weight:700;">${t.budget}</span> / 10000</td>
       <td>${(t.players||[]).length} / 15</td>
       <td><button class="btn btn-danger btn-sm" onclick="deleteTeam('${t.id}')">Remove</button></td>
     </tr>`).join("");
@@ -1971,7 +1971,7 @@ window.adminResetAuction = async function() {
     }
     // Reset all teams
     for (const t of state.teams) {
-      await updateDoc(doc(db, "teams", t.id), { budget: 1000, players: [] });
+      await updateDoc(doc(db, "teams", t.id), { budget: 10000, players: [] });
     }
     // Clear history
     for (const h of state.auctionHistory) {
@@ -2026,7 +2026,7 @@ function renderTeamDash() {
           <div class="td-stat"><div class="td-stat-val">${team.budget}</div><div class="td-stat-lbl">Budget Left</div></div>
           <div class="td-stat"><div class="td-stat-val">${players.length}/15</div><div class="td-stat-lbl">Players</div></div>
           <div class="td-stat"><div class="td-stat-val">${15-players.length}</div><div class="td-stat-lbl">Slots Left</div></div>
-          <div class="td-stat"><div class="td-stat-val">${1000-team.budget}</div><div class="td-stat-lbl">Spent</div></div>
+          <div class="td-stat"><div class="td-stat-val">${10000-team.budget}</div><div class="td-stat-lbl">Spent</div></div>
         </div>
       </div>
     </div>
@@ -2076,14 +2076,14 @@ function renderHistory() {
   if (!state.teams.length) {
     lb.innerHTML = `<div style="color:var(--text-secondary);text-align:center;padding:1rem;">No teams registered</div>`;
   } else {
-    const sorted     = [...state.teams].sort((a,b) => (b.players||[]).length - (a.players||[]).length || (1000-b.budget)-(1000-a.budget));
+    const sorted     = [...state.teams].sort((a,b) => (b.players||[]).length - (a.players||[]).length || (10000-b.budget)-(10000-a.budget));
     const rankColors = ["gold","silver","bronze"];
     lb.innerHTML     = sorted.map((t,i) => `
       <div class="leaderboard-item">
         <div class="lb-rank ${rankColors[i]||""}">${i+1}</div>
         <div class="lb-info">
           <div class="lb-team">${t.name}</div>
-          <div class="lb-detail">${(t.players||[]).length} players · ${1000-t.budget} pts spent</div>
+          <div class="lb-detail">${(t.players||[]).length} players · ${10000-t.budget} pts spent</div>
         </div>
         <div class="lb-pts">${t.budget} PTS</div>
       </div>`).join("");
