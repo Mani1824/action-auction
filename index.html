@@ -1798,6 +1798,7 @@ function renderAdmin() {
   renderAdminDashboard();
 }
 
+// FROM line 1799
 function renderAdminDashboard() {
   const el = document.getElementById("adPlayers"); if (!el) return;
   document.getElementById("adPlayers").textContent = state.players.length;
@@ -1825,11 +1826,27 @@ function renderAdminDashboard() {
       </div>
     </div>`).join("");
 }
+// TO line 1825 (closing brace)
+    </div>`).join("");
+}
 
 window.approvePlayer = async function(id) {
   try {
     await updateDoc(doc(db, "players", id), { status: "approved" });
     toast("Player approved!", "success");
+  } catch(e) { toast("Error: " + e.message, "error"); }
+};
+  window.approveTeam = async function(id) {
+  try {
+    await updateDoc(doc(db, "teams", id), { status: "approved" });
+    toast("Team approved! ✅", "success");
+  } catch(e) { toast("Error: " + e.message, "error"); }
+};
+
+window.rejectTeam = async function(id) {
+  try {
+    await deleteDoc(doc(db, "teams", id));
+    toast("Team rejected and removed", "info");
   } catch(e) { toast("Error: " + e.message, "error"); }
 };
 window.rejectPlayer = async function(id) {
@@ -1875,14 +1892,22 @@ function renderAdminTeams() {
     tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-secondary);">No teams registered</td></tr>`;
     return;
   }
-  tbody.innerHTML = state.teams.map(t => `
-    <tr>
-      <td><b>${t.name}</b></td>
-      <td>${t.owner}</td>
-      <td><span style="color:var(--gold);font-weight:700;">${t.budget}</span> / 10000</td>
-      <td>${(t.players||[]).length} / 15</td>
-      <td><button class="btn btn-danger btn-sm" onclick="deleteTeam('${t.id}')">Remove</button></td>
-    </tr>`).join("");
+ tbody.innerHTML = state.teams.map(t => `
+  <tr>
+    <td><b>${t.name}</b></td>
+    <td>${t.owner}</td>
+    <td><span style="color:var(--gold);font-weight:700;">${t.budget}</span> / 1000</td>
+    <td>${(t.players||[]).length} / 15</td>
+    <td>
+      <span class="badge ${t.status === 'pending' ? 'badge-pending' : 'badge-pool'}" style="margin-right:.4rem;">
+        ${t.status || 'approved'}
+      </span>
+    </td>
+    <td style="display:flex;gap:.4rem;flex-wrap:wrap;">
+      ${t.status === 'pending' ? `<button class="btn btn-green btn-sm" onclick="approveTeam('${t.id}')">✅ Approve</button>` : ""}
+      <button class="btn btn-danger btn-sm" onclick="deleteTeam('${t.id}')">Remove</button>
+    </td>
+  </tr>`).join("");
 }
 
 window.deleteTeam = async function(id) {
