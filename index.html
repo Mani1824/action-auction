@@ -658,7 +658,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
     <h2 class="section-title">QUICK <span>ACCESS</span></h2>
     <div class="cards-grid">
       <div class="action-card" onclick="showPage('player-reg')">
-        <div class="card-icon">🏃</div>
+        <div class="card-icon">🏏</div>
         <div class="card-title">Player Registration</div>
         <div class="card-desc">Register yourself as a player to enter the auction pool and get picked by teams.</div>
       </div>
@@ -686,7 +686,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
   <div class="container">
     <div class="form-page">
       <div class="form-header">
-        <h2>🏃 PLAYER REGISTRATION</h2>
+        <h2>🏏 PLAYER REGISTRATION</h2>
         <p>Register to enter the auction pool. Your details will be reviewed by admin.</p>
       </div>
       <div class="glass-box">
@@ -856,7 +856,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
             <p>Waiting for admin to start the auction and select a player...</p>
           </div>
           <div id="activeSpotlight" style="display:none">
-            <div class="spotlight-img" id="spotlightImg">🏃</div>
+            <div class="spotlight-img" id="spotlightImg">🏏</div>
             <div class="spotlight-name" id="spotlightName">Player Name</div>
             <div class="spotlight-meta">
               <span class="meta-badge role" id="spotlightRole">Role</span>
@@ -961,7 +961,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
       <div class="admin-logo">⚙️ ADMIN</div>
       <div class="admin-menu">
         <div class="admin-menu-item active" onclick="adminSection('dashboard',this)">📊 Dashboard</div>
-        <div class="admin-menu-item" onclick="adminSection('players',this)">🏃 Players</div>
+        <div class="admin-menu-item" onclick="adminSection('players',this)">🏏 Players</div>
         <div class="admin-menu-item" onclick="adminSection('teams',this)">🛡️ Teams</div>
         <div class="admin-menu-item" onclick="adminSection('auction-control',this)">🔨 Auction</div>
         <div class="admin-menu-item" onclick="adminSection('add-player',this)">➕ Add Player</div>
@@ -1070,7 +1070,7 @@ tr:hover td{background:rgba(255,255,255,0.02);}
 <div class="sold-overlay" id="soldOverlay">
   <div class="sold-card">
     <div class="sold-stamp">SOLD!</div>
-    <div class="sold-img" id="soldImg">🏃</div>
+    <div class="sold-img" id="soldImg">🏏</div>
     <div class="sold-player-name" id="soldPlayerName">Player Name</div>
     <div class="sold-team" id="soldTeamName">Team Name</div>
     <div class="sold-price" id="soldPrice">0 PTS</div>
@@ -1463,7 +1463,7 @@ function renderSpotlight(playerId) {
   const imgEl = document.getElementById("spotlightImg");
   imgEl.innerHTML = p.img
     ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
-    : (p.name[0] || "🏃");
+    : (p.name[0] || "🏏");
   document.getElementById("spotlightName").textContent   = p.name;
   document.getElementById("spotlightRole").textContent   = p.role;
   document.getElementById("spotlightJersey").textContent = `#${p.jersey}`;
@@ -1735,7 +1735,7 @@ function showSoldOverlay(player, team, price) {
   const imgEl = document.getElementById("soldImg");
   imgEl.innerHTML = player.img
     ? `<img src="${player.img}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
-    : (player.name[0] || "🏃");
+    : (player.name[0] || "🏏");
   document.getElementById("soldPlayerName").textContent = player.name;
   document.getElementById("soldTeamName").textContent   = `Sold to: ${team.name}`;
   document.getElementById("soldPrice").textContent      = `${price} PTS`;
@@ -2035,7 +2035,7 @@ function renderTeamDash() {
         <span>Budget: ${team.budget} pts remaining</span><span>${Math.round(team.budget/10)}%</span>
       </div>
     </div>
-    <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:1px;margin-bottom:1rem;">🏃 My Squad</h3>
+    <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:1px;margin-bottom:1rem;">🏏 My Squad</h3>
     ${players.length ? `<div class="player-grid">${players.map(p => `
       <div class="player-mini-card">
         <div class="pmc-img">${p.img ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : (p.name[0]||"?")}</div>
