@@ -1604,7 +1604,7 @@ function startLocalTimer() {
   clearInterval(state.timerInterval);
   // Recalculate from server timestamp if available
   if (state.timerStartedAt) {
-    const elapsed = Math.floor((Date.now() - state.timerStartedAt) / 10000);
+    const elapsed = Math.floor((Date.now() - state.timerStartedAt) / 1000);
     state.timerValue = Math.max(0, 30 - elapsed);
   }
   updateTimerUI();
