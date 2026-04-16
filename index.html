@@ -1351,7 +1351,7 @@ window.registerPlayer = async function() {
   if (!name || !jersey || !age || !role || !basePrice) {
     return toast("Please fill all required fields", "error");
   }
-  const imgData = await getImgData("playerImg");
+  const imgData = "";
   try {
     await addDoc(playersCol, {
       name, jersey, age, role,
