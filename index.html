@@ -2140,5 +2140,36 @@ function renderHistoryGrid(filter) {
   }
 })();
 </script>
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAaVvl6mnF9lQnMhllqkMR1oApBnz4QvKw",
+  authDomain: "vpl-auction-84a64.firebaseapp.com",
+  projectId: "vpl-auction-84a64",
+  storageBucket: "vpl-auction-84a64.firebasestorage.app",
+  messagingSenderId: "526290620950",
+  appId: "1:526290620950:web:601850d7c90d8d72b61b37"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+document.querySelector("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  try {
+    await addDoc(collection(db, "players"), {
+      createdAt: new Date()
+    });
+
+    alert("Registration Successful!");
+  } catch (error) {
+    console.error(error);
+    alert("Error saving registration");
+  }
+});
+</script>
 </body>
 </html>
