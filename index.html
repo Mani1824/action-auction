@@ -1391,16 +1391,17 @@ window.registerTeam = async function() {
   if (state.teams.find(t => t.email === email)) return toast("Email already registered", "error");
   const imgData = await getImgData("teamImg");
   try {
-    const docRef = await addDoc(teamsCol, {
-      name, owner, email, password,
-      phone:  document.getElementById("tPhone").value,
-      logo:   imgData,
-      budget: 10000,
-      players:[],
-      registeredAt: serverTimestamp()
-    });
-    toast(`✅ Team "${name}" registered! Welcome aboard.`, "success", 4000);
-    loginWith({ id: docRef.id, name, owner, email, logo: imgData, budget: 1000, players: [] });
+   const docRef = await addDoc(teamsCol, {
+  name, owner, email, password,
+  phone:  document.getElementById("tPhone").value,
+  logo:   imgData,
+  budget: 10000,
+  players:[],
+  status: "pending",           // ← NEW: awaits admin approval
+  registeredAt: serverTimestamp()
+});
+toast(`✅ Team "${name}" registered! Awaiting admin approval.`, "success", 4000);
+// Don't auto-login — team must be approved first
   } catch(e) {
     toast("Error registering team: " + e.message, "error");
   }
@@ -1411,6 +1412,7 @@ window.loginTeam = function() {
   const password = document.getElementById("tLoginPassword").value;
   const team     = state.teams.find(t => t.email === email && t.password === password);
   if (!team) return toast("Invalid email or password", "error");
+  if (team.status === "pending") return toast("⏳ Your team is awaiting admin approval.", "warning");  // ← NEW
   loginWith(team);
 };
 
